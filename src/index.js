@@ -5,6 +5,7 @@ import {
   listTasks,
   updateTask,
 } from './services/taskService.js';
+import { colorPriority, colorStatus } from './utils/colors.js';
 
 function printSection(title) {
   console.log(`\n=== ${title} ===`);
@@ -18,7 +19,7 @@ function printTasks(tasks) {
 
   for (const task of tasks) {
     console.log(
-      `${task.id} | ${task.title} | ${task.status} | ${task.priority} | ${task.createdAt}`,
+      `${task.id} | ${task.title} | ${colorStatus(task.status)} | ${colorPriority(task.priority)} | ${task.createdAt}`,
     );
   }
 }
