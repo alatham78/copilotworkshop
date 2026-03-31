@@ -225,6 +225,20 @@ export function sortTasks(tasks, sortBy) {
   const sorted = [...tasks];
 
   if (sortBy === 'priority') {
+    for (const task of sorted) {
+      if (task === null || typeof task !== 'object') {
+        throw new TypeError('each task must be an object');
+      }
+
+      if (typeof task.priority !== 'string') {
+        throw new TypeError('each task must have a string priority');
+      }
+
+      if (!Object.hasOwn(priorityOrder, task.priority)) {
+        throw new TypeError('task priority value is invalid');
+      }
+    }
+
     sorted.sort((a, b) => {
       if (a === null || typeof a !== 'object' || b === null || typeof b !== 'object') {
         throw new TypeError('each task must be an object');
@@ -242,6 +256,16 @@ export function sortTasks(tasks, sortBy) {
     });
 
     return sorted;
+  }
+
+  for (const task of sorted) {
+    if (task === null || typeof task !== 'object') {
+      throw new TypeError('each task must be an object');
+    }
+
+    if (typeof task.createdAt !== 'string') {
+      throw new TypeError('each task must have a string createdAt');
+    }
   }
 
   sorted.sort((a, b) => {
