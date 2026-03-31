@@ -128,6 +128,57 @@ test('listTasks sorts by createdAt ascending', () => {
   assert.ok(ids.indexOf(early.id) < ids.indexOf(later.id));
 });
 
+test('createTask stores the given category', () => {
+  const task = createUniqueTask({ category: 'work' });
+
+  assert.equal(task.category, 'work');
+});
+
+test('createTask defaults category to general when omitted', () => {
+  const task = createUniqueTask();
+
+  assert.equal(task.category, 'general');
+});
+
+test('listTasks filters by category', () => {
+  createUniqueTask({ category: 'work' });
+  createUniqueTask({ category: 'personal' });
+
+  const filtered = listTasks({ category: 'work' });
+
+  assert.ok(filtered.length > 0);
+  assert.ok(filtered.every((task) => task.category === 'work'));
+});
+
+test('listTasks with category filter excludes non-matching tasks', () => {
+  const base = randomUUID();
+  createUniqueTask({ id: `${base}-work`, category: 'work' });
+  const personal = createUniqueTask({ id: `${base}-personal`, category: 'personal' });
+
+  const filtered = listTasks({ category: 'work' });
+  const ids = filtered.map((task) => task.id);
+
+  assert.ok(!ids.includes(personal.id));
+});
+
+test('updateTask updates category and returns updated task', () => {
+  const created = createUniqueTask({ category: 'work' });
+  const updated = updateTask(created.id, { category: 'urgent' });
+
+  assert.equal(updated.category, 'urgent');
+});
+
+test('listTasks filters by both status and category', () => {
+  createUniqueTask({ status: 'todo', category: 'work' });
+  createUniqueTask({ status: 'done', category: 'work' });
+  createUniqueTask({ status: 'todo', category: 'personal' });
+
+  const filtered = listTasks({ status: 'todo', category: 'work' });
+
+  assert.ok(filtered.length > 0);
+  assert.ok(filtered.every((t) => t.status === 'todo' && t.category === 'work'));
+});
+
 test('listTasks returns copies instead of internal state references', () => {
   const created = createUniqueTask({ title: 'Immutable snapshot' });
   const listed = listTasks({ sortBy: 'createdAt' });

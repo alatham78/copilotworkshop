@@ -75,6 +75,19 @@ self-contained, dependency-free workshop exercise.
      - Every command and its flags are described.
      - Output is readable in a standard 80-column terminal.
 
+9. **Assign and filter by category**
+   - As a user, I can optionally assign a category when creating or updating a
+     task and filter the task list by category.
+   - Acceptance criteria:
+     - `task add` accepts an optional `--category` flag.
+     - Category defaults to `"general"` when omitted.
+     - `task list` accepts `--category <value>` to show only matching tasks.
+     - Category is a free-form trimmed string, max 50 characters.
+     - An empty string or a string that is blank after trimming is rejected
+       with exit code 1.
+     - `task show` and `task update` display and accept the category field.
+     - Category comparison is case-sensitive.
+
 ---
 
 ## 3. Data Model
@@ -88,6 +101,7 @@ self-contained, dependency-free workshop exercise.
 | `description` | `string` | Optional, defaults to `""`             |
 | `status`      | `string` | `"todo"` \| `"in-progress"` \| `"done"` |
 | `priority`    | `string` | `"low"` \| `"medium"` \| `"high"`       |
+| `category`    | `string` | Optional, defaults to `"general"`, max 50 chars |
 | `createdAt`   | `string` | ISO 8601 timestamp                      |
 | `updatedAt`   | `string` | ISO 8601 timestamp                      |
 
@@ -202,6 +216,14 @@ modules before touching the store.
 - Must be a positive integer (`> 0`).
 - Non-numeric or zero/negative values → `"Invalid ID: must be a positive integer"`, exit `1`.
 - ID not present in the store → `"Task not found."`, exit `2`.
+
+### Category
+- Optional on create; defaults to `"general"` when omitted.
+- Must be a non-empty string after trimming whitespace.
+- Maximum length: **50 characters**.
+- No enum constraint — any valid string is accepted.
+- When supplied on `update`, replaces the existing value; omitting the flag
+  leaves the existing category unchanged.
 
 ### `--sort` flag
 - Must be one of: `"priority"`, `"date"`.

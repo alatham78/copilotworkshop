@@ -19,7 +19,7 @@ function printTasks(tasks) {
 
   for (const task of tasks) {
     console.log(
-      `${task.id} | ${task.title} | ${colorStatus(task.status)} | ${colorPriority(task.priority)} | ${task.createdAt}`,
+      `${task.id} | ${task.title} | ${colorStatus(task.status)} | ${colorPriority(task.priority)} | [${task.category}] | ${task.createdAt}`,
     );
   }
 }
@@ -35,6 +35,7 @@ function main() {
       description: 'Draft project plan for task manager',
       status: 'todo',
       priority: 'high',
+      category: 'work',
     });
 
     const task2 = createTask({
@@ -42,6 +43,7 @@ function main() {
       description: 'Add reusable validation helpers',
       status: 'in-progress',
       priority: 'medium',
+      category: 'work',
     });
 
     const task3 = createTask({
@@ -49,6 +51,7 @@ function main() {
       description: 'Update schema with validation notes',
       status: 'done',
       priority: 'low',
+      category: 'personal',
     });
 
     console.log(task1);
@@ -63,6 +66,9 @@ function main() {
 
     printSection('Filter by priority=high and sort by priority');
     printTasks(listTasks({ priority: 'high', sortBy: 'priority' }));
+
+    printSection('Filter by category=work');
+    printTasks(listTasks({ category: 'work', sortBy: 'createdAt' }));
 
     printSection('Get task by id');
     console.log(getTaskById(task2.id));

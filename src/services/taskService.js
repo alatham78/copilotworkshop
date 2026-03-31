@@ -46,8 +46,11 @@ export function listTasks(options = {}) {
         const priorityMatch = validatedOptions.priority
           ? task.priority === validatedOptions.priority
           : true;
+        const categoryMatch = validatedOptions.category
+          ? task.category === validatedOptions.category
+          : true;
 
-        return statusMatch && priorityMatch;
+        return statusMatch && priorityMatch && categoryMatch;
       });
 
     return sortTasks(filtered, validatedOptions.sortBy);

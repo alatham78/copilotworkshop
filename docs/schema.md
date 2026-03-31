@@ -13,6 +13,7 @@
 | `priority` | `string` | Yes | Must exactly match one allowed value: `low`, `medium`, or `high` (case-sensitive, no aliases). |
 | `createdAt` | `string` | Yes | Must be an ISO 8601 UTC timestamp string (`new Date(value).toISOString() === value`); set once on create and never mutated. |
 | `updatedAt` | `string` | Yes | Must be an ISO 8601 UTC timestamp string; set on create; must be refreshed on each successful update; must be greater than or equal to `createdAt`. |
+| `category` | `string` | No | Must be a string; `trim()` result is required (not empty/whitespace-only after trimming); max length `50` characters after trimming; defaults to `'general'` when omitted; no enum constraint (free-form); comparison is case-sensitive. |
 
 ### In-memory state
 
@@ -51,6 +52,7 @@ src/
   - positive integer IDs
   - non-empty title and optional update payload checks
   - sort values (`priority`, `date`)
+  - category string (trimmed, non-empty, max 50 chars, free-form)
 - Returns validation results in a non-throwing shape (for example, `{ valid: false, message }`).
 - Depends on no other local modules.
 
@@ -61,22 +63,22 @@ src/
 
 ### `src/commands/add.js`
 - Exports command handler for creating tasks.
-- Parses add flags, validates inputs via `validate.js`, writes through `store.js`, and prints confirmation.
+- Parses add flags (including optional `--category`), validates inputs via `validate.js`, writes through `store.js`, and prints confirmation.
 - Depends on `store.js`, `validate.js`, and optionally `format.js`.
 
 ### `src/commands/list.js`
 - Exports command handler for listing tasks.
-- Reads all tasks from `store.js`, applies filter/sort rules, validates filter/sort options, and prints table output.
+- Reads all tasks from `store.js`, applies filter/sort rules (including optional `--category` filter), validates filter/sort options, and prints table output.
 - Depends on `store.js`, `validate.js`, and `format.js`.
 
 ### `src/commands/show.js`
 - Exports command handler for displaying one task.
-- Validates ID, reads from `store.js`, and prints full details.
+- Validates ID, reads from `store.js`, and prints full details including the `category` field.
 - Depends on `store.js`, `validate.js`, and `format.js`.
 
 ### `src/commands/update.js`
 - Exports command handler for updating a task.
-- Validates ID and changed fields, updates record via `store.js`, refreshes `updatedAt`, and prints confirmation.
+- Validates ID and changed fields (including optional `--category`), updates record via `store.js`, refreshes `updatedAt`, and prints confirmation.
 - Depends on `store.js` and `validate.js`.
 
 ### `src/commands/delete.js`

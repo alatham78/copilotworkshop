@@ -19,6 +19,7 @@ export class Task {
    * @param {string} [input.id] - Optional task id.
    * @param {string} [input.createdAt] - Optional creation timestamp.
    * @param {string} [input.updatedAt] - Optional update timestamp.
+   * @param {string} [input.category='general'] - Optional task category.
    */
   constructor(input) {
     validateTaskPayload(input, { partial: false });
@@ -41,6 +42,7 @@ export class Task {
     this.description = input.description ?? '';
     this.status = input.status ?? 'todo';
     this.priority = input.priority ?? 'medium';
+    this.category = (typeof input.category === 'string' ? input.category.trim() : '') || 'general';
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
@@ -52,6 +54,7 @@ export class Task {
    * @param {string} [updates.description] - Updated description.
    * @param {'todo'|'in-progress'|'done'} [updates.status] - Updated status.
    * @param {'low'|'medium'|'high'} [updates.priority] - Updated priority.
+   * @param {string} [updates.category] - Updated category.
    * @returns {Task} The updated task instance.
    */
   update(updates) {
@@ -73,13 +76,17 @@ export class Task {
       this.priority = updates.priority;
     }
 
+    if (Object.hasOwn(updates, 'category')) {
+      this.category = updates.category.trim() || 'general';
+    }
+
     this.updatedAt = new Date().toISOString();
     return this;
   }
 
   /**
    * Converts this task into a plain JSON-safe object.
-   * @returns {{id: string, title: string, description: string, status: string, priority: string, createdAt: string, updatedAt: string}} Plain task object.
+   * @returns {{id: string, title: string, description: string, status: string, priority: string, category: string, createdAt: string, updatedAt: string}} Plain task object.
    */
   toJSON() {
     return {
@@ -88,6 +95,7 @@ export class Task {
       description: this.description,
       status: this.status,
       priority: this.priority,
+      category: this.category,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

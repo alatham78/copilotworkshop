@@ -143,6 +143,62 @@ test('Task handles multiple updates while iterating update payloads', () => {
   );
 });
 
+test('Task constructor defaults category to general', () => {
+  const task = new Task({ title: 'Default category' });
+
+  assert.equal(task.category, 'general');
+});
+
+test('Task constructor stores an explicit category value', () => {
+  const task = new Task({ title: 'Explicit category', category: 'work' });
+
+  assert.equal(task.category, 'work');
+});
+
+test('Task constructor trims category whitespace', () => {
+  const task = new Task({ title: 'Trimmed category', category: '  personal  ' });
+
+  assert.equal(task.category, 'personal');
+});
+
+test('Task constructor rejects a non-string category', () => {
+  assert.throws(
+    () => new Task({ title: 'Bad category type', category: 99 }),
+    /category must be a string/,
+  );
+});
+
+test('Task constructor rejects a category longer than 50 characters', () => {
+  assert.throws(
+    () => new Task({ title: 'Long category', category: 'c'.repeat(51) }),
+    /category must be at most 50 characters/,
+  );
+});
+
+test('Task constructor accepts a category with exactly 50 characters', () => {
+  const category = 'c'.repeat(50);
+  const task = new Task({ title: 'Max category', category });
+
+  assert.equal(task.category, category);
+});
+
+test('Task update changes category field', () => {
+  const task = new Task({ title: 'Update category', category: 'work' });
+
+  task.update({ category: 'personal' });
+
+  assert.equal(task.category, 'personal');
+});
+
+test('Task update rejects a whitespace-only category', () => {
+  const task = new Task({ title: 'Fallback category', category: 'work' });
+
+  assert.throws(
+    () => task.update({ category: '   ' }),
+    /category must not be empty after trimming/,
+  );
+});
+
 test('Task toJSON returns expected task fields', () => {
   const task = new Task({
     id: 'task-json-1',
@@ -160,6 +216,7 @@ test('Task toJSON returns expected task fields', () => {
     description: 'For toJSON',
     status: 'in-progress',
     priority: 'high',
+    category: 'general',
     createdAt: '2026-03-31T12:00:00.000Z',
     updatedAt: '2026-03-31T12:00:00.000Z',
   });

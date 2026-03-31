@@ -77,12 +77,13 @@ export function validateTaskPayload(payload, options = {}) {
   const hasDescription = Object.hasOwn(payload, 'description');
   const hasStatus = Object.hasOwn(payload, 'status');
   const hasPriority = Object.hasOwn(payload, 'priority');
+  const hasCategory = Object.hasOwn(payload, 'category');
 
   if (!partial && !hasTitle) {
     throw new TypeError('title is required');
   }
 
-  if (partial && !hasTitle && !hasDescription && !hasStatus && !hasPriority) {
+  if (partial && !hasTitle && !hasDescription && !hasStatus && !hasPriority && !hasCategory) {
     throw new TypeError('at least one updatable field is required');
   }
 
@@ -132,6 +133,22 @@ export function validateTaskPayload(payload, options = {}) {
     }
   }
 
+  if (hasCategory) {
+    if (typeof payload.category !== 'string') {
+      throw new TypeError('category must be a string');
+    }
+
+    const trimmed = payload.category.trim();
+
+    if (trimmed.length === 0) {
+      throw new TypeError('category must not be empty after trimming');
+    }
+
+    if (trimmed.length > 50) {
+      throw new TypeError('category must be at most 50 characters');
+    }
+  }
+
   return { ...payload };
 }
 
@@ -155,6 +172,7 @@ export function validateListOptions(options = {}) {
   const hasStatus = Object.hasOwn(options, 'status');
   const hasPriority = Object.hasOwn(options, 'priority');
   const hasSortBy = Object.hasOwn(options, 'sortBy');
+  const hasCategory = Object.hasOwn(options, 'category');
 
   if (hasStatus) {
     if (typeof options.status !== 'string') {
@@ -186,9 +204,20 @@ export function validateListOptions(options = {}) {
     }
   }
 
+  if (hasCategory) {
+    if (typeof options.category !== 'string') {
+      throw new TypeError('category filter must be a string');
+    }
+
+    if (options.category.trim().length === 0) {
+      throw new TypeError('category filter must not be empty');
+    }
+  }
+
   return {
     status: options.status,
     priority: options.priority,
+    category: options.category,
     sortBy: options.sortBy ?? 'createdAt',
   };
 }

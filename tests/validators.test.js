@@ -120,3 +120,57 @@ test('sortTasks rejects invalid priority inside task objects', () => {
     /task priority value is invalid/,
   );
 });
+
+test('validateTaskPayload accepts a valid category string', () => {
+  const result = validateTaskPayload({ title: 'T', category: 'work' }, { partial: false });
+
+  assert.equal(result.category, 'work');
+});
+
+test('validateTaskPayload rejects a non-string category', () => {
+  assert.throws(
+    () => validateTaskPayload({ title: 'T', category: 42 }, { partial: false }),
+    /category must be a string/,
+  );
+});
+
+test('validateTaskPayload rejects a category that is empty after trimming', () => {
+  assert.throws(
+    () => validateTaskPayload({ title: 'T', category: '   ' }, { partial: false }),
+    /category must not be empty after trimming/,
+  );
+});
+
+test('validateTaskPayload rejects a category longer than 50 characters', () => {
+  assert.throws(
+    () => validateTaskPayload({ title: 'T', category: 'c'.repeat(51) }, { partial: false }),
+    /category must be at most 50 characters/,
+  );
+});
+
+test('validateTaskPayload accepts a category with exactly 50 characters', () => {
+  const category = 'c'.repeat(50);
+  const result = validateTaskPayload({ title: 'T', category }, { partial: false });
+
+  assert.equal(result.category, category);
+});
+
+test('validateListOptions accepts a valid category filter string', () => {
+  const result = validateListOptions({ category: 'work' });
+
+  assert.equal(result.category, 'work');
+});
+
+test('validateListOptions rejects a non-string category filter', () => {
+  assert.throws(
+    () => validateListOptions({ category: 99 }),
+    /category filter must be a string/,
+  );
+});
+
+test('validateListOptions rejects an empty category filter string', () => {
+  assert.throws(
+    () => validateListOptions({ category: '   ' }),
+    /category filter must not be empty/,
+  );
+});
