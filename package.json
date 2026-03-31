@@ -1,0 +1,20 @@
+{
+  "name": "copilotworkshop",
+  "version": "1.0.0",
+  "description": "<img src=\"https://octodex.github.com/images/Professortocat_v2.png\" align=\"right\" height=\"200px\" />",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.6.2"
+  },
+  "type": "module"
+}
